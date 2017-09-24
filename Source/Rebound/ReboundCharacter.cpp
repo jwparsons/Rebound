@@ -46,7 +46,7 @@ void AReboundCharacter::BeginPlay()
 	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, 
 		EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, true);
 	Camera->DetachFromComponent(DetachmentTransformRules);
-	Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 900.0f), FRotator(-20.0f, 0.0f, 0.0f));
+	Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 1100.0f), FRotator(-30.0f, 0.0f, 0.0f));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,6 +76,14 @@ void AReboundCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AReboundCharacter::OnResetVR);
+}
+
+void AReboundCharacter::ExplodeCharacter()
+{
+	// play explosion
+	// play wilhelm scream
+	// destroy mesh
+	// disable controls
 }
 
 

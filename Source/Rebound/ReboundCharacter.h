@@ -63,5 +63,8 @@ protected:
 public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetCamera() const { return Camera; }
+
+public:
+	void ExplodeCharacter();
 };
 
