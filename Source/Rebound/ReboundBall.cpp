@@ -24,9 +24,11 @@ AReboundBall::AReboundBall()
 		ReboundBallMesh->SetMaterial(0, FReboundBallMaterial.Object);
 
 	// set rebound ball physics material
+	/*
 	static ConstructorHelpers::FObjectFinder<UObject> FReboundBallPhysicalMaterial(TEXT("PhysicalMaterial'/Game/Physics/PM_ArenaWall.PM_ArenaWall'"));
 	if (FReboundBallPhysicalMaterial.Object)
 		ReboundBallMesh->SetPhysMaterialOverride((UPhysicalMaterial*)FReboundBallPhysicalMaterial.Object);
+	*/
 
 	// set rebound ball scale
 	FVector ReboundBallScale = FVector(1.0f, 1.0f, 1.0f);
