@@ -32,8 +32,70 @@ AReboundCharacter::AReboundCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
-	// Create a camera
+	// Create transform rules for multiple components
+	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
+
+	// Create and assign camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	if (Camera) {
+		Camera->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+		Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 1100.0f), FRotator(-30.0f, 0.0f, 0.0f));
+	}
+
+	// Create character skeletal mesh
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> FCharacterMesh(TEXT("SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
+	if (FCharacterMesh.Object)
+		GetMesh()->SetSkeletalMesh(FCharacterMesh.Object);
+	static ConstructorHelpers::FObjectFinder<UClass> FCharacterAnim(TEXT("UClass'/Game/Mannequin/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP_C'"));
+	if (FCharacterAnim.Object)
+		GetMesh()->SetAnimInstanceClass(FCharacterAnim.Object);
+
+	if (GetMesh()) {
+		FRotator RelativeMeshRotation = FRotator(0.0f, 270.0f, 0.0f);
+		FVector RelativeMeshLocation = FVector(0.0f, 0.0f, -97.0f);
+		FVector RelativeMeshScale = FVector(1.0f, 1.0f, 1.0f);
+		FTransform RelativeMeshTransform = FTransform(RelativeMeshRotation, RelativeMeshLocation, RelativeMeshScale);
+		GetMesh()->SetRelativeTransform(RelativeMeshTransform);
+		AutoPossessPlayer = EAutoReceiveInput::Player0;
+	}
+
+	// Create particle system explosion
+	ExplosionParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Explosion"));
+	if (ExplosionParticle) {
+		static ConstructorHelpers::FObjectFinder<UParticleSystem> FExplosion(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+		if (FExplosion.Object)
+			ExplosionParticle->SetTemplate(FExplosion.Object);
+		ExplosionParticle->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+		ExplosionParticle->bAutoActivate = false;
+	}
+
+	// Create audio players and audio cues
+	ExplosionAudioPlayer = CreateDefaultSubobject<UAudioComponent>(TEXT("ExplosionAudioPlayer"));
+	if (ExplosionAudioPlayer) {
+		ExplosionAudioPlayer->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+		ExplosionAudioPlayer->bAutoActivate = false;
+	}
+	ScreamAudioPlayer = CreateDefaultSubobject<UAudioComponent>(TEXT("ScreamAudioPlayer"));
+	if (ScreamAudioPlayer) {
+		ScreamAudioPlayer->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+		ScreamAudioPlayer->bAutoActivate = false;
+	}
+	ExplosionSound = CreateDefaultSubobject<USoundWave>(TEXT("ExplosionSound"));
+	if (ExplosionSound) {
+		static ConstructorHelpers::FObjectFinder<USoundWave> FExplosionSound(TEXT("SoundWave'/Game/StarterContent/Audio/Explosion01.Explosion01'"));
+		if (FExplosionSound.Object)
+			ExplosionSound = FExplosionSound.Object;
+	}
+	ScreamSound = CreateDefaultSubobject<USoundWave>(TEXT("ScreamSound"));
+	if (ScreamSound) {
+		static ConstructorHelpers::FObjectFinder<USoundWave> FScreamSound(TEXT("SoundWave'/Game/Audio/Scream.Scream'"));
+		if (FScreamSound.Object)
+			ScreamSound = FScreamSound.Object;
+	}
+	
+	// Register OnHit for CapsuleComponent
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AReboundCharacter::OnHit);
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -43,10 +105,20 @@ void AReboundCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, 
+	// Setup Camera
+	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld,
 		EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, true);
-	Camera->DetachFromComponent(DetachmentTransformRules);
-	Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 1100.0f), FRotator(-30.0f, 0.0f, 0.0f));
+	if (Camera) {
+		Camera->DetachFromComponent(DetachmentTransformRules);
+		Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 1100.0f), FRotator(-30.0f, 0.0f, 0.0f));
+	}
+
+	// Setup Audio Players
+	if (ExplosionAudioPlayer && ExplosionSound)
+		ExplosionAudioPlayer->SetSound(ExplosionSound);
+
+	if (ScreamAudioPlayer && ScreamSound)
+		ScreamAudioPlayer->SetSound(ScreamSound);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,12 +152,23 @@ void AReboundCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 
 void AReboundCharacter::ExplodeCharacter()
 {
-	// play explosion
-	// play wilhelm scream
-	// destroy mesh
-	// disable controls
-}
+	// create explosion particle
+	UParticleSystemComponent* Explosion = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle->Template, GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f), true);
+	if (Explosion) {
+		Explosion->SetWorldScale3D(FVector(5.0f, 5.0f, 5.0f));
+		Explosion->CustomTimeDilation = 0.25f;
+	}
 
+	// play audio
+	if (ExplosionAudioPlayer && ScreamAudioPlayer) {
+		ExplosionAudioPlayer->Play();
+		ScreamAudioPlayer->Play();
+	}
+
+	// move character off screen
+	ACharacter::AddActorLocalOffset(FVector(0.0f, 0.0f, -2500.0f));
+	GetMesh()->SetConstraintMode(EDOFMode::None);
+}
 
 void AReboundCharacter::OnResetVR()
 {
@@ -140,5 +223,13 @@ void AReboundCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void AReboundCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor->IsA(AReboundBall::StaticClass()))
+	{
+		ExplodeCharacter();
 	}
 }
