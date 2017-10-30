@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "ReboundBall.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
+#include "ConstructorHelpers.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -74,10 +74,6 @@ public:
 
 public:
 	void ExplodeCharacter();
-
-private:
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
 	UParticleSystemComponent* ExplosionParticle;

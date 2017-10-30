@@ -5,6 +5,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "ReboundCharacter.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -28,6 +29,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Mesh")
 	UStaticMeshComponent* ReboundBallMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Trail")
+	UParticleSystemComponent* TrailParticle;
 	float ElapsedTime;
 };
