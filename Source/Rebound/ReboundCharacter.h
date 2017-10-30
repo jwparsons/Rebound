@@ -2,6 +2,13 @@
 
 #pragma once
 
+#include "ReboundBall.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "ReboundCharacter.generated.h"
@@ -14,6 +21,7 @@ class AReboundCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
+
 public:
 	AReboundCharacter();
 	virtual void BeginPlay();
@@ -66,5 +74,16 @@ public:
 
 public:
 	void ExplodeCharacter();
+
+private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+private:
+	UParticleSystemComponent* ExplosionParticle;
+	UAudioComponent* ExplosionAudioPlayer;
+	UAudioComponent* ScreamAudioPlayer;
+	USoundWave* ExplosionSound;
+	USoundWave* ScreamSound;
 };
 
