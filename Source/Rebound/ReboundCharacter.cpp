@@ -40,7 +40,7 @@ AReboundCharacter::AReboundCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	if (Camera) {
 		Camera->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
-		Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 1100.0f), FRotator(-30.0f, 0.0f, 0.0f));
+		Camera->SetWorldLocationAndRotation(FVector(-2500.0f, 0.0f, 1000.0f), FRotator(340.0f, 0.0f, 0.0f));
 	}
 
 	// Create character skeletal mesh
@@ -93,9 +93,6 @@ AReboundCharacter::AReboundCharacter()
 		if (FScreamSound.Object)
 			ScreamSound = FScreamSound.Object;
 	}
-	
-	// Register OnHit for CapsuleComponent
-	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AReboundCharacter::OnHit);
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -104,13 +101,14 @@ AReboundCharacter::AReboundCharacter()
 void AReboundCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("Your message"));
 
 	// Setup Camera
 	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld,
 		EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, true);
 	if (Camera) {
 		Camera->DetachFromComponent(DetachmentTransformRules);
-		Camera->SetWorldLocationAndRotation(FVector(-1800.0f, 0.0f, 1100.0f), FRotator(-30.0f, 0.0f, 0.0f));
+		Camera->SetWorldLocationAndRotation(FVector(-2500.0f, 0.0f, 1000.0f), FRotator(340.0f, 0.0f, 0.0f));
 	}
 
 	// Setup Audio Players
@@ -223,13 +221,5 @@ void AReboundCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
-	}
-}
-
-void AReboundCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
-{
-	if (OtherActor->IsA(AReboundBall::StaticClass()))
-	{
-		ExplodeCharacter();
 	}
 }
