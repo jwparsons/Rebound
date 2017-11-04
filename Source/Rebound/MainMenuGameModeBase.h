@@ -3,6 +3,7 @@
 #pragma once
 #include "MainMenuPawn.h"
 #include "MainMenuPlayerController.h"
+#include "MainMenuHUD.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"

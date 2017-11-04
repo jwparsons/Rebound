@@ -4,6 +4,7 @@
 #include "Editor/UMGEditor/Public/WidgetBlueprint.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "MainMenuWidget.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -17,15 +18,4 @@ class REBOUND_API AMainMenuPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-public:
-	AMainMenuPlayerController();
-
-protected:
-	virtual void BeginPlay() override;
-	
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HUD")
-	TSubclassOf<UUserWidget> BP_MainMenuWidget;
-
-	UUserWidget* MainMenuWidget;
 };

@@ -6,4 +6,5 @@ AMainMenuGameModeBase::AMainMenuGameModeBase()
 {
 	DefaultPawnClass = AMainMenuPawn::StaticClass();
 	PlayerControllerClass = AMainMenuPlayerController::StaticClass();
+	HUDClass = AMainMenuHUD::StaticClass();
 }
