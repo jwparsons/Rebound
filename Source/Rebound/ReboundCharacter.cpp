@@ -101,7 +101,6 @@ AReboundCharacter::AReboundCharacter()
 void AReboundCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("Your message"));
 
 	// Setup Camera
 	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld,

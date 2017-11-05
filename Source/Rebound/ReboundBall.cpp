@@ -49,7 +49,8 @@ AReboundBall::AReboundBall()
 
 	// create particle system trail
 	TrailParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Trail"));
-	if (TrailParticle) {
+	if (TrailParticle)
+	{
 		static ConstructorHelpers::FObjectFinder<UParticleSystem> FTrailParticle(TEXT("ParticleSystem'/Game/Particles/P_Trail.P_Trail'"));
 		if (FTrailParticle.Object)
 			TrailParticle->SetTemplate(FTrailParticle.Object);
@@ -100,9 +101,10 @@ void AReboundBall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 {
 	if (OtherActor->IsA(AReboundCharacter::StaticClass()))
 	{
-		//OtherActor->ExplodeCharacter();
-		AReboundCharacter* Player = Cast<AReboundCharacter>(OtherActor);
-		Player->ExplodeCharacter();
+		if (!OtherComponent->ComponentHasTag(FName("Shield")))
+		{
+			AReboundCharacter* Player = Cast<AReboundCharacter>(OtherActor);
+			Player->ExplodeCharacter();
+		}
 	}
 }
-
