@@ -5,6 +5,7 @@
 UMainMenuWidget::UMainMenuWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bIsSearchingForGame = false;
+	SIOClientComponent = CreateDefaultSubobject<USocketIOClientComponent>(TEXT("SocketIOClientComponent"));
 }
 
 void UMainMenuWidget::JoinGame()

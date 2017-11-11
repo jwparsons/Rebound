@@ -2,6 +2,7 @@
 
 #pragma once
 #include "Runtime/UMG/Public/Components/Button.h"
+#include "SocketIOClientComponent.h"
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -16,9 +17,12 @@ public:
 	UMainMenuWidget(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "Buttons")
-		void JoinGame();
+	void JoinGame();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Search")
-		bool bIsSearchingForGame;
+	bool bIsSearchingForGame;
+
+	UPROPERTY(VisibleAnywhere)
+	USocketIOClientComponent* SIOClientComponent;
 
 };
