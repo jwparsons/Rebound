@@ -2,7 +2,6 @@
 
 #pragma once
 #include "Runtime/UMG/Public/Components/Button.h"
-#include "SocketIOClientComponent.h"
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -21,8 +20,5 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Search")
 	bool bIsSearchingForGame;
-
-	UPROPERTY(VisibleAnywhere)
-	USocketIOClientComponent* SIOClientComponent;
 
 };

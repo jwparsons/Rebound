@@ -2,9 +2,14 @@
 
 #include "MainMenuPlayerController.h"
 
+AMainMenuPlayerController::AMainMenuPlayerController()
+{
+	SIOClientComponent = CreateDefaultSubobject<USocketIOClientComponent>(TEXT("SocketIOClientComponent"));
+}
+
 void AMainMenuPlayerController::BeginPlay()
 {
-	if (!IsLocalPlayerController()) {
-		// idk yet
+	if (IsLocalPlayerController()) {
+		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
 	}
 }

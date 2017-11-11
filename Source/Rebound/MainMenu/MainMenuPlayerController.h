@@ -5,6 +5,7 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "MainMenuWidget.h"
+#include "SocketIOClientComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -16,6 +17,9 @@ class REBOUND_API AMainMenuPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	AMainMenuPlayerController();
+
 	virtual void BeginPlay() override;
 
+	USocketIOClientComponent* SIOClientComponent;
 };
