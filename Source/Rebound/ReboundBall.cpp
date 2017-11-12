@@ -11,6 +11,7 @@ AReboundBall::AReboundBall()
 
 	// create rebound ball mesh
 	ReboundBallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ReboundBall"));
+	RootComponent = ReboundBallMesh;
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FReboundBallMesh(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
 	if (FReboundBallMesh.Object)
 		ReboundBallMesh->SetStaticMesh(FReboundBallMesh.Object);
@@ -19,10 +20,6 @@ AReboundBall::AReboundBall()
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> FReboundBallMaterial(TEXT("Material'/Game/Materials/M_BlueGlow.M_BlueGlow'"));
 	if (FReboundBallMaterial.Object)
 		ReboundBallMesh->SetMaterial(0, FReboundBallMaterial.Object);
-
-	// create attach to parent transform rules
-	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
 
 	// set rebound ball scale
 	FVector ReboundBallScale = FVector(1.0f, 1.0f, 1.0f);
@@ -58,7 +55,7 @@ AReboundBall::AReboundBall()
 		FRotator TrailParticleRotation = FRotator(0.0f, -180.0f, 0.0f);
 		TrailParticle->SetRelativeLocation(TrailParticleLocation);
 		TrailParticle->SetRelativeRotation(TrailParticleRotation);
-		TrailParticle->AttachToComponent(ReboundBallMesh, AttachmentTransformRules);
+		TrailParticle->SetupAttachment(ReboundBallMesh);
 		TrailParticle->bAutoActivate = false;
 	}
 }
@@ -68,12 +65,6 @@ void AReboundBall::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*
-	FRotator InitialImpulse = GetActorRotation();
-	float RollRotation = InitialImpulse.Roll
-
-	ReboundBallMesh->AddImpulse(InitialImpulse);
-	*/
 }
 
 // Called every frame

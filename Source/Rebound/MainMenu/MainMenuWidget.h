@@ -2,6 +2,8 @@
 
 #pragma once
 #include "Runtime/UMG/Public/Components/Button.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "MainMenuPlayerController.h"
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"

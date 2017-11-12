@@ -32,14 +32,11 @@ AReboundCharacter::AReboundCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
-	// Create transform rules for multiple components
-	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
-
 	// Create and assign camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	if (Camera) {
-		Camera->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+	if (Camera)
+	{
+		Camera->SetupAttachment(GetCapsuleComponent());
 		Camera->SetWorldLocationAndRotation(FVector(-2500.0f, 0.0f, 1000.0f), FRotator(340.0f, 0.0f, 0.0f));
 	}
 
@@ -51,7 +48,8 @@ AReboundCharacter::AReboundCharacter()
 	if (FCharacterAnim.Object)
 		GetMesh()->SetAnimInstanceClass(FCharacterAnim.Object);
 
-	if (GetMesh()) {
+	if (GetMesh())
+	{
 		FRotator RelativeMeshRotation = FRotator(0.0f, 270.0f, 0.0f);
 		FVector RelativeMeshLocation = FVector(0.0f, 0.0f, -97.0f);
 		FVector RelativeMeshScale = FVector(1.0f, 1.0f, 1.0f);
@@ -62,33 +60,38 @@ AReboundCharacter::AReboundCharacter()
 
 	// Create particle system explosion
 	ExplosionParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Explosion"));
-	if (ExplosionParticle) {
+	if (ExplosionParticle)
+	{
 		static ConstructorHelpers::FObjectFinder<UParticleSystem> FExplosion(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
 		if (FExplosion.Object)
 			ExplosionParticle->SetTemplate(FExplosion.Object);
-		ExplosionParticle->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+		ExplosionParticle->SetupAttachment(GetCapsuleComponent());
 		ExplosionParticle->bAutoActivate = false;
 	}
 
 	// Create audio players and audio cues
 	ExplosionAudioPlayer = CreateDefaultSubobject<UAudioComponent>(TEXT("ExplosionAudioPlayer"));
-	if (ExplosionAudioPlayer) {
-		ExplosionAudioPlayer->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+	if (ExplosionAudioPlayer)
+	{
+		ExplosionAudioPlayer->SetupAttachment(GetCapsuleComponent());
 		ExplosionAudioPlayer->bAutoActivate = false;
 	}
 	ScreamAudioPlayer = CreateDefaultSubobject<UAudioComponent>(TEXT("ScreamAudioPlayer"));
-	if (ScreamAudioPlayer) {
-		ScreamAudioPlayer->AttachToComponent(GetCapsuleComponent(), AttachmentTransformRules);
+	if (ScreamAudioPlayer)
+	{
+		ScreamAudioPlayer->SetupAttachment(GetCapsuleComponent());
 		ScreamAudioPlayer->bAutoActivate = false;
 	}
 	ExplosionSound = CreateDefaultSubobject<USoundWave>(TEXT("ExplosionSound"));
-	if (ExplosionSound) {
+	if (ExplosionSound)
+	{
 		static ConstructorHelpers::FObjectFinder<USoundWave> FExplosionSound(TEXT("SoundWave'/Game/StarterContent/Audio/Explosion01.Explosion01'"));
 		if (FExplosionSound.Object)
 			ExplosionSound = FExplosionSound.Object;
 	}
 	ScreamSound = CreateDefaultSubobject<USoundWave>(TEXT("ScreamSound"));
-	if (ScreamSound) {
+	if (ScreamSound)
+	{
 		static ConstructorHelpers::FObjectFinder<USoundWave> FScreamSound(TEXT("SoundWave'/Game/Audio/Scream.Scream'"));
 		if (FScreamSound.Object)
 			ScreamSound = FScreamSound.Object;

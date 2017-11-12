@@ -10,4 +10,6 @@ UMainMenuWidget::UMainMenuWidget(const FObjectInitializer& ObjectInitializer) : 
 void UMainMenuWidget::JoinGame()
 {
 	bIsSearchingForGame = !bIsSearchingForGame;
+	AMainMenuPlayerController* MainMenuPlayerController = Cast<AMainMenuPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	MainMenuPlayerController->JoinGame(bIsSearchingForGame);
 }
