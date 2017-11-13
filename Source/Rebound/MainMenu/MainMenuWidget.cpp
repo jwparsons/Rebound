@@ -13,3 +13,11 @@ void UMainMenuWidget::JoinGame()
 	AMainMenuPlayerController* MainMenuPlayerController = Cast<AMainMenuPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	MainMenuPlayerController->JoinGame(bIsSearchingForGame);
 }
+
+void UMainMenuWidget::ExitGame()
+{
+	AMainMenuPlayerController* MainMenuPlayerController = Cast<AMainMenuPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (bIsSearchingForGame)
+		MainMenuPlayerController->JoinGame(bIsSearchingForGame);
+	UKismetSystemLibrary::QuitGame(GetWorld(), MainMenuPlayerController, EQuitPreference::Quit);
+}

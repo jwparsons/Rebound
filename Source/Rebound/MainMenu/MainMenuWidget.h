@@ -4,6 +4,7 @@
 #include "Runtime/UMG/Public/Components/Button.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "MainMenuPlayerController.h"
+#include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -19,6 +20,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Buttons")
 	void JoinGame();
+
+	UFUNCTION(BlueprintCallable, Category = "Buttons")
+	void ExitGame();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Search")
 	bool bIsSearchingForGame;
