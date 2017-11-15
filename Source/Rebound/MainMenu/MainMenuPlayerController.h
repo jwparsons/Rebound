@@ -3,6 +3,7 @@
 #pragma once
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "SocketIOClientComponent.h"
+#include "Runtime/Json/Public/Dom/JsonValue.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"

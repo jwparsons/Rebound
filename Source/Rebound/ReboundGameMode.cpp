@@ -14,14 +14,20 @@ AReboundGameMode::AReboundGameMode()
 	}
 
 	SIOClientComponent = CreateDefaultSubobject<USocketIOClientComponent>(TEXT("SocketIOClientComponent"));
-	SIOClientComponent->bShouldAutoConnect = false;
+	if (SIOClientComponent) {
+		SIOClientComponent->bShouldAutoConnect = false;
+	}
 }
 
 void AReboundGameMode::BeginPlay()
 {
-	SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
-	SIOClientComponent->EmitNative(FString("server creation"), FString("hi"));
+	if (SIOClientComponent) {
+		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
+		SIOClientComponent->EmitNative(FString("server creation"), GetWorld()->GetAddressURL());
 
-	UE_LOG(LogTemp, Log, TEXT("poooooooooooooooop"));
-	UE_LOG(LogTemp, Log, TEXT("%s"), *GetWorld()->GetAddressURL());
+		SIOClientComponent->OnNativeEvent(FString("terminate"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
+		{
+			UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit);
+		});
+	}
 }

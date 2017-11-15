@@ -15,10 +15,12 @@ void AMainMenuPlayerController::BeginPlay()
 	if (IsLocalPlayerController()) {
 		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
 		if (SIOClientComponent) {
-			SIOClientComponent->OnNativeEvent(FString("join game"), [](const FString& Event, const TSharedPtr<FJsonValue>& Message)
+			SIOClientComponent->OnNativeEvent(FString("join game"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
 			{
-				//Called when the event is received
-				UE_LOG(LogTemp, Warning, TEXT("blem"));
+				FJsonValue* MessageJson = Message.Get();
+				FString PortNumber = MessageJson->AsString();
+				UE_LOG(LogTemp, Warning, TEXT("%s"), *PortNumber);
+				ClientTravel("127.0.0.1" + PortNumber, ETravelType::TRAVEL_Absolute);
 			});
 		}
 	}
