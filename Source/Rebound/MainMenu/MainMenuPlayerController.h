@@ -20,6 +20,6 @@ public:
 
 	USocketIOClientComponent* SIOClientComponent;
 
-	void JoinGame(bool);
-
+	void SearchForGame();
+	void StopSearchForGame();
 };

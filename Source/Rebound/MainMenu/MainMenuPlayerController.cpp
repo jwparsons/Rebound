@@ -5,26 +5,37 @@
 AMainMenuPlayerController::AMainMenuPlayerController()
 {
 	SIOClientComponent = CreateDefaultSubobject<USocketIOClientComponent>(TEXT("SocketIOClientComponent"));
-	SIOClientComponent->bShouldAutoConnect = false;
+	if (SIOClientComponent) {
+		SIOClientComponent->bShouldAutoConnect = false;
+	}
 }
 
 void AMainMenuPlayerController::BeginPlay()
 {
 	if (IsLocalPlayerController()) {
 		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
+		if (SIOClientComponent) {
+			SIOClientComponent->OnNativeEvent(FString("join game"), [](const FString& Event, const TSharedPtr<FJsonValue>& Message)
+			{
+				//Called when the event is received
+				UE_LOG(LogTemp, Warning, TEXT("blem"));
+			});
+		}
 	}
 }
 
-void AMainMenuPlayerController::JoinGame(bool bIsSearchingForGame)
+void AMainMenuPlayerController::SearchForGame()
 {
-	if (IsLocalPlayerController()) {
-		if (bIsSearchingForGame) {
-			UE_LOG(LogTemp, Warning, TEXT("a"));
-			SIOClientComponent->EmitNative(FString("join"), FString("hi"));
-		}
-		else {
-			UE_LOG(LogTemp, Warning, TEXT("b"));
-			SIOClientComponent->EmitNative(FString("cancel"), FString("hi"));
-		}
+	if (IsLocalPlayerController())
+	{
+		SIOClientComponent->EmitNative(FString("join"), FString("hi"));
+	}
+}
+
+void AMainMenuPlayerController::StopSearchForGame()
+{
+	if (IsLocalPlayerController())
+	{
+		SIOClientComponent->EmitNative(FString("cancel"), FString("hi"));
 	}
 }

@@ -12,4 +12,16 @@ AReboundGameMode::AReboundGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	SIOClientComponent = CreateDefaultSubobject<USocketIOClientComponent>(TEXT("SocketIOClientComponent"));
+	SIOClientComponent->bShouldAutoConnect = false;
+}
+
+void AReboundGameMode::BeginPlay()
+{
+	SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
+	SIOClientComponent->EmitNative(FString("server creation"), FString("hi"));
+
+	UE_LOG(LogTemp, Log, TEXT("poooooooooooooooop"));
+	UE_LOG(LogTemp, Log, TEXT("%s"), *GetWorld()->GetAddressURL());
 }

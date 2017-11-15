@@ -9,15 +9,14 @@ UMainMenuWidget::UMainMenuWidget(const FObjectInitializer& ObjectInitializer) : 
 
 void UMainMenuWidget::JoinGame()
 {
-	bIsSearchingForGame = !bIsSearchingForGame;
 	AMainMenuPlayerController* MainMenuPlayerController = Cast<AMainMenuPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	MainMenuPlayerController->JoinGame(bIsSearchingForGame);
+	MainMenuPlayerController->SearchForGame();
+	bIsSearchingForGame = !bIsSearchingForGame;
 }
 
 void UMainMenuWidget::ExitGame()
 {
 	AMainMenuPlayerController* MainMenuPlayerController = Cast<AMainMenuPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if (bIsSearchingForGame)
-		MainMenuPlayerController->JoinGame(bIsSearchingForGame);
+	MainMenuPlayerController->StopSearchForGame();
 	UKismetSystemLibrary::QuitGame(GetWorld(), MainMenuPlayerController, EQuitPreference::Quit);
 }

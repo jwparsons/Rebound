@@ -1,6 +1,7 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include "SocketIOClientComponent.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -13,7 +14,9 @@ class AReboundGameMode : public AGameModeBase
 
 public:
 	AReboundGameMode();
+
+	virtual void BeginPlay() override;
+
+	USocketIOClientComponent* SIOClientComponent;
+
 };
-
-
-
