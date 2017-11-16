@@ -32,6 +32,9 @@ AReboundCharacter::AReboundCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
+	// Health
+	Health = 2;
+
 	// Create and assign camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	if (Camera)
@@ -115,14 +118,14 @@ void AReboundCharacter::BeginPlay()
 
 	// Setup Audio Players
 	if (ExplosionAudioPlayer && ExplosionSound)
-		ExplosionAudioPlayer->SetSound(ExplosionSound);
+		ExplosionAudioPlayer->SetSound(Cast<USoundBase>(ExplosionSound));
 
 	if (ScreamAudioPlayer && ScreamSound)
-		ScreamAudioPlayer->SetSound(ScreamSound);
+		ScreamAudioPlayer->SetSound(Cast<USoundBase>(ScreamSound));
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Input
+// Input	
 
 void AReboundCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -168,6 +171,18 @@ void AReboundCharacter::ExplodeCharacter()
 	// move character off screen
 	ACharacter::AddActorLocalOffset(FVector(0.0f, 0.0f, -2500.0f));
 	GetMesh()->SetConstraintMode(EDOFMode::None);
+}
+
+void AReboundCharacter::OnRep_Health()
+{
+	if (Health <= 0)
+		ExplodeCharacter();
+}
+
+void AReboundCharacter::RemoveHealth()
+{
+	if (Health > 0)
+		Health -= 1;
 }
 
 void AReboundCharacter::OnResetVR()
@@ -224,4 +239,9 @@ void AReboundCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AReboundCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AReboundCharacter, Health);
 }

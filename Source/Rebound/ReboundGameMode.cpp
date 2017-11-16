@@ -30,4 +30,19 @@ void AReboundGameMode::BeginPlay()
 			UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit);
 		});
 	}
+
+	// spawn ball
+	FVector Location(0.0f, 0.0f, 150.0f);
+	FRotator Rotation(0.0f, 0.0f, 0.0f);
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	GetWorld()->SpawnActor<AReboundBall>(Location, Rotation, SpawnInfo);
+}
+
+bool AReboundGameMode::ReadyToStartMatch_Implementation()
+{
+	if (NumPlayers >= 4)
+		return true;
+	else
+		return false;
 }

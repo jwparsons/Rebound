@@ -8,6 +8,7 @@
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
 #include "ConstructorHelpers.h"
+#include "UnrealNetwork.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -72,8 +73,11 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetCamera() const { return Camera; }
 
+
 public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&) const override;
 	void ExplodeCharacter();
+	void RemoveHealth();
 
 private:
 	UParticleSystemComponent* ExplosionParticle;
@@ -81,5 +85,11 @@ private:
 	UAudioComponent* ScreamAudioPlayer;
 	USoundWave* ExplosionSound;
 	USoundWave* ScreamSound;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Health)
+		int Health;
+
+	UFUNCTION()
+		void OnRep_Health();
 };
 

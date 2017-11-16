@@ -58,6 +58,10 @@ AReboundBall::AReboundBall()
 		TrailParticle->SetupAttachment(ReboundBallMesh);
 		TrailParticle->bAutoActivate = false;
 	}
+
+	// replication
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -95,7 +99,7 @@ void AReboundBall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 		if (!OtherComponent->ComponentHasTag(FName("Shield")))
 		{
 			AReboundCharacter* Player = Cast<AReboundCharacter>(OtherActor);
-			Player->ExplodeCharacter();
+			Player->RemoveHealth();
 		}
 	}
 }
