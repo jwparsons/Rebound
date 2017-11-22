@@ -5,8 +5,9 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "MainMenuPlayerController.h"
 #include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
+#include "ReboundGameInstance.h"
 
-#include "CoreMinimal.h"
+#include "Engine.h"
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
@@ -23,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Buttons")
 	void ExitGame();
+
+	UFUNCTION(BlueprintCallable, Category = "Buttons")
+	void RetrievePlayerName(FString PlayerInput);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Search")
 	bool bIsSearchingForGame;

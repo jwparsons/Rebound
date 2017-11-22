@@ -9,6 +9,9 @@
 #include "Components/AudioComponent.h"
 #include "ConstructorHelpers.h"
 #include "UnrealNetwork.h"
+#include "Game/PlayerNameWidget.h"
+#include "Runtime/UMG/Public/Components/WidgetComponent.h"
+#include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -75,6 +78,9 @@ public:
 
 
 public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&) const override;
 	void ExplodeCharacter();
 	void RemoveHealth();
@@ -91,5 +97,14 @@ private:
 
 	UFUNCTION()
 		void OnRep_Health();
-};
 
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PlayerName")
+		TSubclassOf<UPlayerNameWidget> BP_PlayerNameWidget;
+
+	UPlayerNameWidget* PlayerNameWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PlayerName")
+	UWidgetComponent* PlayerNameWidgetComponent;
+
+};

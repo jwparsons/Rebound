@@ -20,3 +20,12 @@ void UMainMenuWidget::ExitGame()
 	MainMenuPlayerController->StopSearchForGame();
 	UKismetSystemLibrary::QuitGame(GetWorld(), MainMenuPlayerController, EQuitPreference::Quit);
 }
+
+void UMainMenuWidget::RetrievePlayerName(FString PlayerInput)
+{
+	if (GEngine->GetWorld() && GEngine->GetWorld()->GetGameInstance())
+	{
+		UReboundGameInstance* ReboundGameInstance = Cast<UReboundGameInstance>(GEngine->GetWorld()->GetGameInstance());
+		ReboundGameInstance->SetPlayerName(PlayerInput);
+	}
+}

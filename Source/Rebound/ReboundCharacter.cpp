@@ -100,6 +100,23 @@ AReboundCharacter::AReboundCharacter()
 			ScreamSound = FScreamSound.Object;
 	}
 
+	// Create player name widget blueprint
+	static ConstructorHelpers::FClassFinder<UPlayerNameWidget> FBP_PlayerNameWidget(TEXT("WidgetBlueprint'/Game/UMG/BP_PlayerNameWidget.BP_PlayerNameWidget_C'"));
+	if (FBP_PlayerNameWidget.Class)
+		BP_PlayerNameWidget = FBP_PlayerNameWidget.Class;
+
+	// Create player name widget component
+	PlayerNameWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("PlayerNameComponent"));
+	if (PlayerNameWidgetComponent) {
+		PlayerNameWidgetComponent->SetWidgetClass(BP_PlayerNameWidget);
+		PlayerNameWidgetComponent->SetupAttachment(GetMesh());
+		FRotator RelativeRotation = FRotator(0.0f, 90.0f, 0.0f);
+		FVector RelativeLocation = FVector(0.0f, 0.0f, 200.0f);
+		FVector RelativeScale = FVector(1.0f, 1.0f, 1.0f);
+		FTransform RelativeTransform = FTransform(RelativeRotation, RelativeLocation, RelativeScale);
+		PlayerNameWidgetComponent->SetRelativeTransform(RelativeTransform);
+	}
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -122,6 +139,18 @@ void AReboundCharacter::BeginPlay()
 
 	if (ScreamAudioPlayer && ScreamSound)
 		ScreamAudioPlayer->SetSound(Cast<USoundBase>(ScreamSound));
+}
+
+void AReboundCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FTransform PlayerNameWidgetTransform = PlayerNameWidgetComponent->GetComponentTransform();
+	FVector PlayerNameWidgetLocation = PlayerNameWidgetTransform.GetLocation();
+
+	FVector CameraLocation = Camera->GetComponentLocation();
+	FRotator BetweenRotation = UKismetMathLibrary::FindLookAtRotation(PlayerNameWidgetLocation, CameraLocation);
+	PlayerNameWidgetComponent->SetWorldRotation(BetweenRotation);
 }
 
 //////////////////////////////////////////////////////////////////////////
