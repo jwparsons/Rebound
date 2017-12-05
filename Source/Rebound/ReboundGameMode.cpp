@@ -17,17 +17,21 @@ AReboundGameMode::AReboundGameMode()
 	if (SIOClientComponent) {
 		SIOClientComponent->bShouldAutoConnect = false;
 	}
+
+	PlayerControllerClass = AReboundPlayerController::StaticClass();
 }
 
 void AReboundGameMode::BeginPlay()
 {
+	Super::BeginPlay();
 	if (SIOClientComponent) {
-		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
+		SIOClientComponent->Connect(FString("http://73.118.57.198:3000"));
 		SIOClientComponent->EmitNative(FString("server creation"), GetWorld()->GetAddressURL());
 
 		SIOClientComponent->OnNativeEvent(FString("terminate"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
 		{
 			UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit);
+			FGenericPlatformMisc::RequestExit(false);
 		});
 	}
 
@@ -39,10 +43,44 @@ void AReboundGameMode::BeginPlay()
 	GetWorld()->SpawnActor<AReboundBall>(Location, Rotation, SpawnInfo);
 }
 
-bool AReboundGameMode::ReadyToStartMatch_Implementation()
+/** select best spawn point for player */
+AActor* AReboundGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
+	for (TActorIterator<APlayerStart> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		APlayerStart* PlayerStart = *ActorItr;
+		if (PlayerStart->PlayerStartTag != FName("TAKEN"))
+		{
+			PlayerStart->PlayerStartTag = FName("TAKEN");
+			return PlayerStart;
+		}
+	}
+	return nullptr;
+}
+
+bool AReboundGameMode::ReadyToStartMatch_Implementation() {
 	if (NumPlayers >= 4)
 		return true;
 	else
 		return false;
+}
+
+bool AReboundGameMode::ReadyToEndMatch_Implementation()
+{
+	int NumAlive = 0;
+	for (TActorIterator<AReboundCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->ActorHasTag(FName("dead")))
+			NumAlive++;
+	}
+	return NumAlive == 0;
+}
+
+void AReboundGameMode::EndMatch()
+{
+	if (SIOClientComponent) {
+		SIOClientComponent->Connect(FString("http://73.118.57.198:3000"));
+		SIOClientComponent->EmitNative(FString("match end"), GetWorld()->GetAddressURL());
+	}
+	Super::EndMatch();
 }

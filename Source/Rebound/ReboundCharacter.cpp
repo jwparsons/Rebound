@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "ReboundPlayerController.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AReboundCharacter
@@ -32,9 +33,6 @@ AReboundCharacter::AReboundCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
-	// Health
-	Health = 2;
-
 	// Create and assign camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	if (Camera)
@@ -58,7 +56,6 @@ AReboundCharacter::AReboundCharacter()
 		FVector RelativeMeshScale = FVector(1.0f, 1.0f, 1.0f);
 		FTransform RelativeMeshTransform = FTransform(RelativeMeshRotation, RelativeMeshLocation, RelativeMeshScale);
 		GetMesh()->SetRelativeTransform(RelativeMeshTransform);
-		AutoPossessPlayer = EAutoReceiveInput::Player0;
 	}
 
 	// Create particle system explosion
@@ -72,19 +69,7 @@ AReboundCharacter::AReboundCharacter()
 		ExplosionParticle->bAutoActivate = false;
 	}
 
-	// Create audio players and audio cues
-	ExplosionAudioPlayer = CreateDefaultSubobject<UAudioComponent>(TEXT("ExplosionAudioPlayer"));
-	if (ExplosionAudioPlayer)
-	{
-		ExplosionAudioPlayer->SetupAttachment(GetCapsuleComponent());
-		ExplosionAudioPlayer->bAutoActivate = false;
-	}
-	ScreamAudioPlayer = CreateDefaultSubobject<UAudioComponent>(TEXT("ScreamAudioPlayer"));
-	if (ScreamAudioPlayer)
-	{
-		ScreamAudioPlayer->SetupAttachment(GetCapsuleComponent());
-		ScreamAudioPlayer->bAutoActivate = false;
-	}
+	// Create audio cues
 	ExplosionSound = CreateDefaultSubobject<USoundWave>(TEXT("ExplosionSound"));
 	if (ExplosionSound)
 	{
@@ -111,11 +96,16 @@ AReboundCharacter::AReboundCharacter()
 		PlayerNameWidgetComponent->SetWidgetClass(BP_PlayerNameWidget);
 		PlayerNameWidgetComponent->SetupAttachment(GetMesh());
 		FRotator RelativeRotation = FRotator(0.0f, 90.0f, 0.0f);
-		FVector RelativeLocation = FVector(0.0f, 0.0f, 200.0f);
-		FVector RelativeScale = FVector(1.0f, 1.0f, 1.0f);
+		FVector RelativeLocation = FVector(0.0f, 0.0f, 250.0f);
+		FVector RelativeScale = FVector(2.0f, 2.0f, 2.0f);
 		FTransform RelativeTransform = FTransform(RelativeRotation, RelativeLocation, RelativeScale);
 		PlayerNameWidgetComponent->SetRelativeTransform(RelativeTransform);
 	}
+
+	static ConstructorHelpers::FClassFinder<UEndWidget> FBP_EndWidget(TEXT("WidgetBlueprint'/Game/UMG/BP_EndWidget.BP_EndWidget_C'"));
+	if (FBP_EndWidget.Class)
+		BP_EndWidget = FBP_EndWidget.Class;
+
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -132,13 +122,6 @@ void AReboundCharacter::BeginPlay()
 		Camera->DetachFromComponent(DetachmentTransformRules);
 		Camera->SetWorldLocationAndRotation(FVector(-2500.0f, 0.0f, 1000.0f), FRotator(340.0f, 0.0f, 0.0f));
 	}
-
-	// Setup Audio Players
-	if (ExplosionAudioPlayer && ExplosionSound)
-		ExplosionAudioPlayer->SetSound(Cast<USoundBase>(ExplosionSound));
-
-	if (ScreamAudioPlayer && ScreamSound)
-		ScreamAudioPlayer->SetSound(Cast<USoundBase>(ScreamSound));
 }
 
 void AReboundCharacter::Tick(float DeltaTime)
@@ -151,6 +134,11 @@ void AReboundCharacter::Tick(float DeltaTime)
 	FVector CameraLocation = Camera->GetComponentLocation();
 	FRotator BetweenRotation = UKismetMathLibrary::FindLookAtRotation(PlayerNameWidgetLocation, CameraLocation);
 	PlayerNameWidgetComponent->SetWorldRotation(BetweenRotation);
+
+	FVector PlayerLocation = GetActorLocation();
+	if (PlayerLocation.Z < -1000.f) {
+		ExplodeCharacter();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -192,26 +180,22 @@ void AReboundCharacter::ExplodeCharacter()
 	}
 
 	// play audio
-	if (ExplosionAudioPlayer && ScreamAudioPlayer) {
-		ExplosionAudioPlayer->Play();
-		ScreamAudioPlayer->Play();
+	if (ExplosionSound && ScreamSound) {
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), Cast<USoundBase>(ExplosionSound), GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f), true);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), Cast<USoundBase>(ScreamSound), GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f), true);
 	}
-
-	// move character off screen
-	ACharacter::AddActorLocalOffset(FVector(0.0f, 0.0f, -2500.0f));
-	GetMesh()->SetConstraintMode(EDOFMode::None);
-}
-
-void AReboundCharacter::OnRep_Health()
-{
-	if (Health <= 0)
-		ExplodeCharacter();
-}
-
-void AReboundCharacter::RemoveHealth()
-{
-	if (Health > 0)
-		Health -= 1;
+	
+	AReboundPlayerController* PlayerController = Cast<AReboundPlayerController>(GetController());
+	if (BP_EndWidget)
+	{
+		if (!EndWidget)
+		{
+			EndWidget = CreateWidget<UEndWidget>(PlayerController, BP_EndWidget);
+			if (EndWidget)
+				EndWidget->AddToViewport();
+		}
+	}
+	Destroy();
 }
 
 void AReboundCharacter::OnResetVR()
@@ -268,9 +252,4 @@ void AReboundCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
-}
-
-void AReboundCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AReboundCharacter, Health);
 }

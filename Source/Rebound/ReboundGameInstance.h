@@ -17,6 +17,8 @@ class REBOUND_API UReboundGameInstance : public UGameInstance
 public:
 	UReboundGameInstance();
 
-	FString PlayerName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Name")
+		FString PlayerName;
+
 	void SetPlayerName(FString PlayerInput);
 };

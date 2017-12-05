@@ -4,14 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerNameWidget.generated.h"
+#include "EndWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class REBOUND_API UPlayerNameWidget : public UUserWidget
+class REBOUND_API UEndWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
+	
+	
+	
 };

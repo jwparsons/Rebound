@@ -99,7 +99,7 @@ void AReboundBall::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 		if (!OtherComponent->ComponentHasTag(FName("Shield")))
 		{
 			AReboundCharacter* Player = Cast<AReboundCharacter>(OtherActor);
-			Player->RemoveHealth();
+			Player->ExplodeCharacter();
 		}
 	}
 }

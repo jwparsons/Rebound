@@ -12,6 +12,7 @@
 #include "Game/PlayerNameWidget.h"
 #include "Runtime/UMG/Public/Components/WidgetComponent.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "Game/EndWidget.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -81,22 +82,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&) const override;
 	void ExplodeCharacter();
-	void RemoveHealth();
 
 private:
 	UParticleSystemComponent* ExplosionParticle;
-	UAudioComponent* ExplosionAudioPlayer;
-	UAudioComponent* ScreamAudioPlayer;
 	USoundWave* ExplosionSound;
 	USoundWave* ScreamSound;
-
-	UPROPERTY(ReplicatedUsing = OnRep_Health)
-		int Health;
-
-	UFUNCTION()
-		void OnRep_Health();
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PlayerName")
@@ -107,4 +98,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PlayerName")
 	UWidgetComponent* PlayerNameWidgetComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HUD")
+		TSubclassOf<UEndWidget> BP_EndWidget;
+
+	UEndWidget* EndWidget;
 };

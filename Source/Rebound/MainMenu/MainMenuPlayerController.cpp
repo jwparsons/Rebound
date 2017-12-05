@@ -13,14 +13,14 @@ AMainMenuPlayerController::AMainMenuPlayerController()
 void AMainMenuPlayerController::BeginPlay()
 {
 	if (IsLocalPlayerController()) {
-		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
+		SIOClientComponent->Connect(FString("http://73.118.57.198:3000"));
 		if (SIOClientComponent) {
 			SIOClientComponent->OnNativeEvent(FString("join game"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
 			{
 				FJsonValue* MessageJson = Message.Get();
 				FString PortNumber = MessageJson->AsString();
 				UE_LOG(LogTemp, Warning, TEXT("%s"), *PortNumber);
-				ClientTravel("127.0.0.1" + PortNumber, ETravelType::TRAVEL_Absolute);
+				ClientTravel("73.118.57.198" + PortNumber, ETravelType::TRAVEL_Absolute);
 			});
 		}
 	}
