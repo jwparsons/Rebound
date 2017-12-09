@@ -25,12 +25,12 @@ void AReboundGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	if (SIOClientComponent) {
-		SIOClientComponent->Connect(FString("http://73.118.57.198:3000"));
+		SIOClientComponent->Connect(FString("http://127.0.0.1:3000"));
 		SIOClientComponent->EmitNative(FString("server creation"), GetWorld()->GetAddressURL());
 
 		SIOClientComponent->OnNativeEvent(FString("terminate"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
 		{
-			UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit);
+			//UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit);
 			FGenericPlatformMisc::RequestExit(false);
 		});
 	}
@@ -70,17 +70,17 @@ bool AReboundGameMode::ReadyToEndMatch_Implementation()
 	int NumAlive = 0;
 	for (TActorIterator<AReboundCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		if (ActorItr->ActorHasTag(FName("dead")))
-			NumAlive++;
+		//if (ActorItr->ActorHasTag(FName("dead")))
+		NumAlive++;
 	}
-	return NumAlive == 0;
+	return NumAlive <= 1;
 }
 
 void AReboundGameMode::EndMatch()
 {
 	if (SIOClientComponent) {
-		SIOClientComponent->Connect(FString("http://73.118.57.198:3000"));
-		SIOClientComponent->EmitNative(FString("match end"), GetWorld()->GetAddressURL());
+		SIOClientComponent->EmitNative(FString("end match"), GetWorld()->GetAddressURL());
+		FGenericPlatformMisc::RequestExit(true);
 	}
 	Super::EndMatch();
 }
