@@ -30,7 +30,6 @@ void AReboundGameMode::BeginPlay()
 
 		SIOClientComponent->OnNativeEvent(FString("terminate"), [&](const FString& Event, const TSharedPtr<FJsonValue>& Message)
 		{
-			//UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit);
 			FGenericPlatformMisc::RequestExit(false);
 		});
 	}
@@ -70,7 +69,6 @@ bool AReboundGameMode::ReadyToEndMatch_Implementation()
 	int NumAlive = 0;
 	for (TActorIterator<AReboundCharacter> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		//if (ActorItr->ActorHasTag(FName("dead")))
 		NumAlive++;
 	}
 	return NumAlive <= 1;
