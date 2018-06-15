@@ -1,6 +1,7 @@
 Rebound Source Code
 =========================
 
+![alt text](https://jwparsons.bitbucket.io/style/images/projects/rebound/title.png "Rebound Title")
 
 ## Introduction
 This repository contains the source code for Rebound, an online multiplayer video game.
