@@ -5,13 +5,14 @@ Rebound Source Code
 
 ## Introduction
 This repository contains the source code for Rebound, an online multiplayer video game.
+The game was created with Unreal Enginer 4 using both Blueprints and C++.
 It has a corresponding [matchmaking server](https://github.com/jwparsons/Rebound_MatchmakingServer) and [demo](https://github.com/jwparsons/Rebound_Demo) (with instructions).
 
 
 ## Requirements
-Rebound was created using Unreal Engine 4.17.
-It uses the [SocketIO Plugin](https://github.com/socketio/socket.io) for client/matchmaking server communication.
-Building the game server binaries requires that UE4 be [built from source](https://docs.unrealengine.com/en-us/Programming/Development/BuildingUnrealEngine).
+* Rebound was created using Unreal Engine 4.17.
+* It uses the [SocketIO Plugin](https://github.com/socketio/socket.io) for client/matchmaking server communication.
+* Building the game server binaries requires that UE4 be [built from source](https://docs.unrealengine.com/en-us/Programming/Development/BuildingUnrealEngine).
 
 
 ## Contribution
