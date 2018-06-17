@@ -17,6 +17,6 @@ It has a corresponding [matchmaking server](https://github.com/jwparsons/Rebound
 
 ## Contribution
 This project was created by me and Tyler Kelly for the class Concurrent, Parallel, & Distributed Programming at FSU.
-I was responsible for game design, artwork, mechanics, multiplayer support, and the matchmaking system.
+I was responsible for game design, artwork, UI, mechanics, multiplayer support, and the matchmaking system.
 
 Enjoy!
