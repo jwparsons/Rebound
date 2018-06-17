@@ -5,7 +5,7 @@ Rebound Source Code
 
 ## Introduction
 This repository contains the source code for Rebound, an online multiplayer video game.
-The game was created with Unreal Engine 4 using both Blueprints and C++.
+The game was created with Unreal Engine 4 (Blueprints and C++) and NodeJS (Javascript).
 It has a corresponding [matchmaking server](https://github.com/jwparsons/Rebound_MatchmakingServer) and [demo](https://github.com/jwparsons/Rebound_Demo) (with instructions).
 
 
