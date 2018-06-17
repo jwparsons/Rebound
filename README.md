@@ -11,7 +11,7 @@ It has a corresponding [matchmaking server](https://github.com/jwparsons/Rebound
 
 ## Requirements
 * Rebound was created using Unreal Engine 4.17.
-* It uses the [SocketIO Plugin](https://github.com/socketio/socket.io) for client/matchmaking server communication.
+* It uses the [SocketIO Plugin](https://github.com/socketio/socket.io) and [NodeJS](https://nodejs.org/en/) for client/matchmaking server communication.
 * Building the game server binaries requires that UE4 be [built from source](https://docs.unrealengine.com/en-us/Programming/Development/BuildingUnrealEngine).
 
 
